@@ -1,0 +1,17 @@
+
+NO.000219  2007-02-24
+ID:00000001  20:14:21
+
+ pH     4.5        
+ NIT -             
+ GLU -      0mmol/L
+*Vc  +3   5.6mmol/L
+*SG        1.025   
+ BLD -     0Cell/uL
+ PRO -         0g/L
+ BIL -      0umol/L
+ URO       Normal  
+ KET -      0mmol/L
+ WBC -     0Cell/uL
+
+

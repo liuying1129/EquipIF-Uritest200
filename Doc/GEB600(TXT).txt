@@ -1,0 +1,17 @@
+
+#0003     2009-04-05
+            09:59:54
+ LEU  -   0   leu/uL
+ NIT  -             
+ URO      Normal    
+ BIL  -             
+ Vc   -   0   mmol/L
+ PRO  -   0      g/L
+ BLD  -   0   ery/uL
+ pH       7.0       
+ SG       1.005     
+ GLU  -   0   mmol/L
+ KET  -   0   mmol/L
+                    
+                    
+

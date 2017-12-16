@@ -1,0 +1,26 @@
+
+#0-257      13-01-09
+GLU         NEGATIVE
+BIL         NEGATIVE
+KET         NEGATIVE
+SG             1.015
+BLD*           TRACE
+pH               6.0
+PRO         NEGATIVE
+UBG       3.2 umol/L
+NIT         NEGATIVE
+LEU         NEGATIVE
+ 
+
+
+
+
+通讯参数是9600,8,1,None 
+9孔对25针通讯线
+2------2
+3------3
+5------7
+       4-6  4--5
+7-8  6--20 
+9孔  4-6    7-8  自连
+25针 4--5   6--20  自连 

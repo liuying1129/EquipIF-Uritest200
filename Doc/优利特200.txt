@@ -1,0 +1,17 @@
+
+ NO.001  05-28-2005
+           08:49:01
+
+ pH        6.0     
+*NIT +             
+ GLU -      0mmol/L
+ SG        1.010   
+ BLD -     0Cell/uL
+ PRO -       0  g/L
+ BIL -      0umol/L
+ URO       Normal  
+ KET -     0 mmol/L
+*WBC +-   15Cell/uL
+                   
+
+

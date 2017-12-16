@@ -1,0 +1,16 @@
+
+ NO0036  05-20-2011
+           11:45   
+
+ LEU  -    cells/uL
+ NIT  -            
+ URO  - 3.2  umol/L
+ PRO  -         g/L
+ PH     6.5        
+ BLD  -    cells/uL
+ SG   1.015        
+ KET  -      mmol/L
+ BIL  -      umol/L
+ GLU  -      mmol/L
+                     
+

@@ -1,0 +1,16 @@
+
+2008/05/08     15:23
+GEB-11        No.001-001
+
+ KET  -             
+*GLU +-   5.5mmol/l 
+ SG      >=1.030    
+ PH        6.0      
+ BLD  -             
+ PRO  -             
+*VC       5.6mmol/l 
+ BIL  -             
+ URO      3.3umol/l 
+*NIT  +             
+*LEU 2+ 125cells/ul 
+

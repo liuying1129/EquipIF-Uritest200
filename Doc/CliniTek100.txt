@@ -1,0 +1,15 @@
+2006年11月04日13时32分47秒
+
+#0-007     11-04-06
+
+GLU*  Trace       
+BIL   Negative    
+KET   Negative    
+SG    <=1.005     
+pH    5.0         
+PRO   Negative    
+URO   0.2 EU/dL   
+NIT   Negative    
+BLO*  Trace       
+LEU   Negative    
+6C
