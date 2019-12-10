@@ -92,6 +92,7 @@ var
   QuaContSpecNoD:string;
   EquipChar:string;
   H_DTR_RTS:boolean;//DTR/RTS高电位
+  EquipUnid:string;//设备唯一编号
 
 //  RFM:STRING;       //返回数据
   hnd:integer;
@@ -243,6 +244,7 @@ begin
   CombinID:=ini.ReadString(IniSection,'组合项目代码','');
 
   LisFormCaption:=ini.ReadString(IniSection,'检验系统窗体标题','');
+  EquipUnid:=ini.ReadString(IniSection,'设备唯一编号','');
 
   QuaContSpecNoG:=ini.ReadString(IniSection,'高值质控联机号','9999');
   QuaContSpecNo:=ini.ReadString(IniSection,'常值质控联机号','9998');
@@ -450,6 +452,7 @@ begin
       '默认样本状态'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '组合项目代码'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '开机自动运行'+#2+'CheckListBox'+#2+#2+'1'+#2+#2+#3+
+      '设备唯一编号'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '高值质控联机号'+#2+'Edit'+#2+#2+'2'+#2+#2+#3+
       '常值质控联机号'+#2+'Edit'+#2+#2+'2'+#2+#2+#3+
       '低值质控联机号'+#2+'Edit'+#2+#2+'2'+#2+#2;
@@ -560,9 +563,9 @@ begin
     FInts :=CreateOleObject('Data2LisSvr.Data2Lis');
     FInts.fData2Lis(ReceiveItemInfo,(SpecNo),'',
       (GroupName),(SpecType),(SpecStatus),(EquipChar),
-      (CombinID),'',(LisFormCaption),(ConnectString),
+      (CombinID),'{!@#}{!@#}{!@#}{!@#}{!@#}{!@#}{!@#}{!@#}{!@#}{!@#}{!@#}{!@#}{!@#}'+EquipUnid,(LisFormCaption),(ConnectString),
       (QuaContSpecNoG),(QuaContSpecNo),(QuaContSpecNoD),'',
-      true,true,'常规');
+      false,true,'常规');
     //if FInts<>nil then FInts:=nil;
     if not VarIsEmpty(FInts) then FInts:= unAssigned;
   end;
