@@ -30,8 +30,6 @@
 
 删除application组件 
 
-工程文件代码run前增加代码：Application.ShowMainForm:=false; 
-
 删除方法WMSyscommand 
 
 删除方法LoadInputPassDll 
@@ -39,6 +37,8 @@
 事件ToolButton2Click中删除LoadInputPassDll的判断 
 
 删除FormCreate事件中的初始化密码的代码 
+
+工程文件代码run前增加代码：Application.ShowMainForm:=false; 
 
 FormClose事件代码改为： 
 
