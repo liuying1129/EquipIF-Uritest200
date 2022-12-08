@@ -18,9 +18,7 @@
 
 设置LYTray1的popupmenu 
 
-设置PopupMenu1.N1（配置菜单）的default属性为true，该菜单项单击事件代码改为： 
-
-  LYTray1.ShowMainForm; 
+设置PopupMenu1.N1（配置菜单）的default属性为true 
   
 删除action组件 
 
@@ -51,5 +49,9 @@ N3Click事件代码改为：
   if (MessageDlg('退出后将不再接收设备数据,确定退出吗？', mtWarning, [mbYes, mbNo], 0) <> mrYes) then exit; 
   
   application.Terminate; 
+  
+PopupMenu1.N1（配置菜单）菜单项单击事件代码改为： 
+
+  LYTray1.ShowMainForm;   
   
 删除单元引用LYTray、ActnList、AppEvnts、registry
