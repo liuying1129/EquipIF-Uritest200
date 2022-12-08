@@ -26,7 +26,7 @@
 
 删除【退出】按钮组件 
 
-删除application组件的事件 
+删除application组件的事件代码 
 
 删除application组件 
 
