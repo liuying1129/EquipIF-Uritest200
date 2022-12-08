@@ -1,4 +1,4 @@
-# LYTray改为CoolTrayIcon，托盘效果如下
+# LYTray改为CoolTrayIcon，托盘效果
 1、小蝴蝶启动：状态栏不显示，仅在托盘显示 
 
 2、双击托盘图标：弹出小蝴蝶界面 
@@ -9,7 +9,7 @@
 
 5、右键退出菜单：确认退出的对话框 
 
-# 升级方法：
+# 升级方法
 删除组件LYTray，增加组件Cooltrayicon并改名为LYTray1 
 
 设置LYTray1的icon属性 
