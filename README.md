@@ -10,9 +10,11 @@
 5、右键退出菜单：确认退出的对话框 
 
 # 升级方法
+LYTray的Icon属性，保存原icon文件（如tray.ico） 
+
 删除组件LYTray，增加组件Cooltrayicon并改名为LYTray1 
 
-设置LYTray1的icon属性 
+设置LYTray1的icon属性为文件tray.ico 
 
 设置LYTray1的iconvisible属性为true 
 
