@@ -16,7 +16,7 @@ LYTray的Icon属性，保存原icon文件（如tray.ico）
 
 设置LYTray1的icon属性为文件tray.ico 
 
-设置LYTray1的iconvisible属性为true 
+设置LYTray1的IconVisible属性为true 
 
 设置LYTray1的popupmenu 
 
@@ -34,17 +34,11 @@ LYTray的Icon属性，保存原icon文件（如tray.ico）
 
 删除方法LoadInputPassDll 
 
-事件ToolButton2Click中删除LoadInputPassDll的判断 
-
-删除FormCreate事件中的初始化密码的代码 
-
-工程文件代码run前增加代码：Application.ShowMainForm:=false; 
-
 FormClose事件代码改为： 
 
   action:=caNone; 
   
-  LYTray1.HideMainForm; 
+  LYTray1.HideMainForm;  
   
 N3Click事件代码改为： 
 
@@ -52,6 +46,12 @@ N3Click事件代码改为：
   
   application.Terminate; 
   
+事件ToolButton2Click中删除LoadInputPassDll的判断 
+
+删除FormCreate事件中的初始化密码的代码 
+
+工程文件代码run前增加代码：Application.ShowMainForm:=false; 
+
 PopupMenu1.N1（配置菜单）菜单项单击事件代码改为： 
 
   LYTray1.ShowMainForm;   
