@@ -10,5 +10,6 @@ uses
 begin
   Application.Initialize;
   Application.CreateForm(TfrmMain, frmMain);
+  Application.ShowMainForm:=false;
   Application.Run;
 end.
