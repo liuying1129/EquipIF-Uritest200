@@ -376,8 +376,17 @@ end;
 procedure TfrmMain.ToolButton2Click(Sender: TObject);
 var
   ss:string;
+  lsComPort:TStrings;
+  sComPort:String;
 begin
-  ss:='串口选择'+#2+'Combobox'+#2+'COM1'+#13+'COM2'+#13+'COM3'+#13+'COM4'+#13+'COM5'+#13+'COM6'+#2+'0'+#2+#2+#3+
+  //获取串口列表 begin
+  lsComPort := TStringList.Create;
+  EnumComPorts(lsComPort);
+  sComPort:=lsComPort.Text;
+  lsComPort.Free;
+  //获取串口列表 end
+
+  ss:='串口选择'+#2+'Combobox'+#2+sComPort+#2+'0'+#2+#2+#3+
       '波特率'+#2+'Combobox'+#2+'19200'+#13+'9600'+#13+'4800'+#13+'2400'+#13+'1200'+#2+'0'+#2+#2+#3+
       '数据位'+#2+'Combobox'+#2+'8'+#13+'7'+#13+'6'+#13+'5'+#2+'0'+#2+#2+#3+
       '停止位'+#2+'Combobox'+#2+'1'+#13+'1.5'+#13+'2'+#2+'0'+#2+#2+#3+
