@@ -83,6 +83,7 @@ var
   EquipChar:string;
   H_DTR_RTS:boolean;//DTR/RTS高电位
   EquipUnid:integer;//设备唯一编号
+  AnalyBarcode:boolean;
 
 //  RFM:STRING;       //返回数据
   hnd:integer;
@@ -194,6 +195,7 @@ begin
   ParityBit:=ini.ReadString(IniSection,'校验位','None');
   H_DTR_RTS:=ini.readBool(IniSection,'DTR/RTS高电位',false);
   autorun:=ini.readBool(IniSection,'开机自动运行',false);
+  AnalyBarcode:=ini.readBool(IniSection,'解析Mejer-700I条码',false);
 
   GroupName:=trim(ini.ReadString(IniSection,'工作组',''));
   EquipChar:=trim(uppercase(ini.ReadString(IniSection,'仪器字母','')));//读出来是大写就万无一失了
@@ -399,6 +401,7 @@ begin
       '默认样本状态'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '组合项目代码'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '开机自动运行'+#2+'CheckListBox'+#2+#2+'1'+#2+#2+#3+
+      '解析Mejer-700I条码'+#2+'CheckListBox'+#2+#2+'1'+#2+#2+#3+
       '设备唯一编号'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '高值质控联机号'+#2+'Edit'+#2+#2+'2'+#2+#2+#3+
       '常值质控联机号'+#2+'Edit'+#2+#2+'2'+#2+#2+#3+
@@ -449,7 +452,7 @@ procedure TfrmMain.ComDataPacket1Packet(Sender: TObject;
   const Str: String);
 VAR
   SpecNo:string;
-  ls:TStrings;
+  ls,ls5:TStrings;
   i:integer;
   dlttype:string;
   sValue:string;
@@ -457,6 +460,7 @@ VAR
   FInts:OleVariant;
   ReceiveItemInfo:OleVariant;
   isJuniorII,ifAM4290:BOOLEAN;
+  Barcode:String;
 begin
   if length(memo1.Lines.Text)>=60000 then memo1.Lines.Clear;//memo只能接受64K个字符
   memo1.Lines.Add(Str);
@@ -473,6 +477,17 @@ begin
 
   for i :=0 to ls.Count-1 do
   begin
+    if AnalyBarcode then//解析Mejer-700I条码.南沙街道要求将条码写入【门诊/住院号】
+    begin
+      if i=3 then
+      begin
+        ls5:=TStringList.Create;
+        ExtractStrings([' '],[],Pchar(ls[i]),ls5);
+        if ls5.Count>1 then Barcode:=ls5[1];
+        ls5.Free;
+      end;
+    end;
+    
     dlttype:=trim(copy(ls[i],1,4));
     IF isJuniorII THEN dlttype:=trim(copy(ls[i],3,3));
     if ifAM4290 then dlttype:=trim(copy(ls[i],1,pos(',',ls[i])-1));
@@ -509,7 +524,7 @@ begin
     FInts :=CreateOleObject('Data2LisSvr.Data2Lis');
     FInts.fData2Lis(ReceiveItemInfo,(SpecNo),'',
       (GroupName),(SpecType),(SpecStatus),(EquipChar),
-      (CombinID),'',(LisFormCaption),(ConnectString),
+      (CombinID),'{!@#}{!@#}{!@#}{!@#}'+Barcode,(LisFormCaption),(ConnectString),
       (QuaContSpecNoG),(QuaContSpecNo),(QuaContSpecNoD),'',
       false,true,'常规',
       '',
