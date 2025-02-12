@@ -266,7 +266,7 @@ const
 var
   s1Pos,SpacePos,spBsLen:integer;
   vValue:string;
-  isGeb,isJuniorII,ifAM4290,isN600:boolean;
+  isGeb,isJuniorII,ifAM4290,isN600,isAve733:boolean;
   ls:TStrings;
 begin
     spBsLen:=Length(spBs);
@@ -277,7 +277,7 @@ begin
       spBsLen:=1;
       if s1Pos<=0 then
       begin
-        s1Pos:=pos('NO',uppercase(Value));//北京华晟H-1用NO做样本号的标识.注意的是:Normal中也存在NO
+        s1Pos:=pos('NO',uppercase(Value));//北京华晟H-1、爱威AVE-733A用NO做样本号的标识.注意的是:Normal中也存在NO
         spBsLen:=2;
       end;
     end;
@@ -286,6 +286,7 @@ begin
     isJuniorII:=pos('SEQ.NO.',uppercase(Value))>0;
     ifAM4290:=ManyStr(',',Pchar(Value))>20;//实际上AM4290的逗号不止这个数
     isN600:=pos('Date:',Value)>0;//长春迪瑞N-600
+    isAve733:=pos('MachineSN',Value)>0;//爱威AVE-733A
 
     vValue:=Value;
     
@@ -295,6 +296,7 @@ begin
     if isGeb THEN SpacePos:=pos(#$D,vValue);//Geb200
     if isJuniorII THEN SpacePos:=pos(#$D,vValue);//JuniorII
     if isN600 THEN SpacePos:=pos(#$D,vValue);//长春迪瑞N-600
+    if isAve733 then SpacePos:=pos(#$D,vValue);//爱威AVE-733A
 
     result:=copy(vValue,spBsLen+1,SpacePos-spBsLen-1);
     
@@ -459,7 +461,7 @@ VAR
   //FInts:IData2Lis;
   FInts:OleVariant;
   ReceiveItemInfo:OleVariant;
-  isJuniorII,ifAM4290:BOOLEAN;
+  isJuniorII,ifAM4290,isAve733:BOOLEAN;
   Barcode:String;
 begin
   if length(memo1.Lines.Text)>=60000 then memo1.Lines.Clear;//memo只能接受64K个字符
@@ -469,6 +471,7 @@ begin
 
   isJuniorII:=pos('SEQ.NO.',uppercase(Str))>0;
   ifAM4290:=ManyStr(',',Pchar(Str))>20;//实际上AM4290的逗号不止这个数
+  isAve733:=pos('MachineSN',Str)>0;//爱威AVE-733A
 
   ls:=TStringList.Create;
   ExtractStrings([#$D,#$A],[],Pchar(Str),ls);//将每行导入到字符串列表中
@@ -491,6 +494,7 @@ begin
     dlttype:=trim(copy(ls[i],1,4));
     IF isJuniorII THEN dlttype:=trim(copy(ls[i],3,3));
     if ifAM4290 then dlttype:=trim(copy(ls[i],1,pos(',',ls[i])-1));
+    if isAve733 then dlttype:=trim(copy(ls[i],1,3));
     dlttype:=stringreplace(dlttype,'*','',[]);//CliniTek
     sValue:=trim(copy(ls[i],5,MaxInt));
     IF isJuniorII THEN sValue:=trim(copy(ls[i],7,MaxInt));
@@ -499,6 +503,7 @@ begin
       sValue:=copy(ls[i],pos(',',ls[i])+1,PosExt(',',Pchar(ls[i]),3)-pos(',',ls[i])-1);
       sValue:=StringReplace(sValue,',','',[rfReplaceAll,rfIgnoreCase]);
     end;
+    if isAve733 then sValue:=trim(copy(ls[i],4,MaxInt));
     sValue:=StringReplace(sValue,'mmol/L','',[rfReplaceAll,rfIgnoreCase]);
     sValue:=StringReplace(sValue,'Leu/uL','',[rfReplaceAll,rfIgnoreCase]);//HT-150
     sValue:=StringReplace(sValue,'Cells/uL','',[rfReplaceAll,rfIgnoreCase]);//Geb200
