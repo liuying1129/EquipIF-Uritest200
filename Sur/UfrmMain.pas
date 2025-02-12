@@ -504,6 +504,7 @@ begin
       sValue:=StringReplace(sValue,',','',[rfReplaceAll,rfIgnoreCase]);
     end;
     if isAve733 then sValue:=trim(copy(ls[i],4,MaxInt));
+    if isAve733 and (sValue='1') then sValue:='¡À';
     sValue:=StringReplace(sValue,'mmol/L','',[rfReplaceAll,rfIgnoreCase]);
     sValue:=StringReplace(sValue,'Leu/uL','',[rfReplaceAll,rfIgnoreCase]);//HT-150
     sValue:=StringReplace(sValue,'Cells/uL','',[rfReplaceAll,rfIgnoreCase]);//Geb200
