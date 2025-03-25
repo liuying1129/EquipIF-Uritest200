@@ -266,7 +266,7 @@ const
 var
   s1Pos,SpacePos,spBsLen:integer;
   vValue:string;
-  isGeb,isJuniorII,ifAM4290,isN600,isAve733:boolean;
+  isGeb,isJuniorII,ifAM4290,isN600,isAve733,isU500:boolean;
   ls:TStrings;
 begin
     spBsLen:=Length(spBs);
@@ -279,6 +279,11 @@ begin
       begin
         s1Pos:=pos('NO',uppercase(Value));//北京华晟H-1、爱威AVE-733A用NO做样本号的标识.注意的是:Normal中也存在NO
         spBsLen:=2;
+        if s1Pos<=0 then
+        begin
+          s1Pos:=pos('ID:',uppercase(Value));//艾康ACON-Mission U500
+          spBsLen:=3;
+        end;
       end;
     end;
 
@@ -287,6 +292,7 @@ begin
     ifAM4290:=ManyStr(',',Pchar(Value))>20;//实际上AM4290的逗号不止这个数
     isN600:=pos('Date:',Value)>0;//长春迪瑞N-600
     isAve733:=pos('MachineSN',Value)>0;//爱威AVE-733A
+    isU500:=(pos('(',Value)>0)and(pos(')',Value)>0);//艾康ACON-Mission U500
 
     vValue:=Value;
     
@@ -297,6 +303,7 @@ begin
     if isJuniorII THEN SpacePos:=pos(#$D,vValue);//JuniorII
     if isN600 THEN SpacePos:=pos(#$D,vValue);//长春迪瑞N-600
     if isAve733 then SpacePos:=pos(#$D,vValue);//爱威AVE-733A
+    if isU500 then SpacePos:=pos('(',vValue);//艾康ACON-Mission U500
 
     result:=copy(vValue,spBsLen+1,SpacePos-spBsLen-1);
     
