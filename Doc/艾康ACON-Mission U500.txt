@@ -1,0 +1,16 @@
+
+ 2025 MAR 20   08:51:01
+ NAME:
+ ID:  0-0004     (00005632)
+ LEU         -        neg
+*NIT         +        pos
+ URO         - <=0.2mg/dL
+ PRO         -        neg
+ PH         6.0          
+ BLO         -        neg
+ SG         1.020        
+ KET         -        neg
+ BIL         -        neg
+*GLU        3+  1000mg/dL
+ ASC         -        neg
+
