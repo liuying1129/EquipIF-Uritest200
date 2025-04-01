@@ -1,0 +1,20 @@
+
+ NO  0030           
+ Date2007-02-27     
+ Time19:12:14       
+ Ca      1.25mmol/L 
+ BLD  +-  0.3  mg/L 
+ CRE      0.9mmol/L 
+ URO  -     0umol/L 
+ NIT  -             
+ PRO  -     0   g/L 
+ KET  -     0  mg/L 
+ SG   >=1.030       
+ PH       5.0       
+ BIL  -     0umol/L 
+ MCA       10  mg/L 
+ GLU  -     0mmol/L 
+ LEU  -     0Leu/uL 
+*M/C +-  3.4-33.9 
+*C/C +    >1.3    
+
