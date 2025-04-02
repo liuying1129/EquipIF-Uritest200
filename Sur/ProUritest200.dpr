@@ -3,7 +3,8 @@ program ProUritest200;
 uses
   Forms,
   UfrmMain in 'UfrmMain.pas' {frmMain},
-  UCommFunction in 'UCommFunction.pas';
+  UCommFunction in 'UCommFunction.pas',
+  PerlRegEx in 'PerlRegEx.pas';
 
 {$R *.res}
 

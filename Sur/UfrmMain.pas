@@ -49,8 +49,6 @@ type
     { Private declarations }
     procedure UpdateConfig;{配置文件生效}
     function MakeDBConn:boolean;
-    function DIFF_decode(const Value:string):string;
-    function GetSpecNo(const Value:string):string; //取得联机号
   public
     { Public declarations }
   end;
@@ -60,7 +58,7 @@ var
 
 implementation
 
-uses ucommfunction;
+uses ucommfunction, PerlRegEx;
 
 const
   CR=#$D+#$A;
@@ -84,6 +82,7 @@ var
   H_DTR_RTS:boolean;//DTR/RTS高电位
   EquipUnid:integer;//设备唯一编号
   AnalyBarcode:boolean;
+  RegExSpecNo:String;//匹配样本号的正则
 
 //  RFM:STRING;       //返回数据
   hnd:integer;
@@ -196,6 +195,8 @@ begin
   H_DTR_RTS:=ini.readBool(IniSection,'DTR/RTS高电位',false);
   autorun:=ini.readBool(IniSection,'开机自动运行',false);
   AnalyBarcode:=ini.readBool(IniSection,'解析Mejer-700I条码',false);
+  RegExSpecNo:=ini.ReadString(IniSection,'匹配样本号的正则','');
+  if RegExSpecNo='' then RegExSpecNo:='NO.[\s\S]*\x20';//如正则为空,执行Match方法报错.故提供默认值
 
   GroupName:=trim(ini.ReadString(IniSection,'工作组',''));
   EquipChar:=trim(uppercase(ini.ReadString(IniSection,'仪器字母','')));//读出来是大写就万无一失了
@@ -258,92 +259,6 @@ begin
   except
     showmessage('串口'+ComPort1.Port+'打开失败!');
   end;
-end;
-
-function TfrmMain.GetSpecNo(const Value:string):string; //取得联机号
-const
-  spBs='NO.';
-var
-  s1Pos,SpacePos,spBsLen:integer;
-  vValue:string;
-  isGeb,isJuniorII,ifAM4290,isN600,isAve733,isU500:boolean;
-  ls:TStrings;
-begin
-    spBsLen:=Length(spBs);
-    s1Pos:=pos(spbs,uppercase(Value));
-    if s1Pos<=0 then
-    begin
-      s1Pos:=pos('#',uppercase(Value));//Bayer CLINITEK 200+,CliniTek100,GEB600,MEJER600II,Mejer-600III
-      spBsLen:=1;
-      if s1Pos<=0 then
-      begin
-        s1Pos:=pos('NO',uppercase(Value));//北京华晟H-1、爱威AVE-733A用NO做样本号的标识.注意的是:Normal中也存在NO
-        spBsLen:=2;
-        if s1Pos<=0 then
-        begin
-          s1Pos:=pos('ID:',uppercase(Value));//艾康ACON-Mission U500
-          spBsLen:=3;
-        end;
-      end;
-    end;
-
-    isGeb:=pos('GEB-',Value)>0;
-    isJuniorII:=pos('SEQ.NO.',uppercase(Value))>0;
-    ifAM4290:=ManyStr(',',Pchar(Value))>20;//实际上AM4290的逗号不止这个数
-    isN600:=pos('Date:',Value)>0;//长春迪瑞N-600
-    isAve733:=pos('MachineSN',Value)>0;//爱威AVE-733A
-    isU500:=(pos('(',Value)>0)and(pos(')',Value)>0);//艾康ACON-Mission U500
-
-    vValue:=Value;
-    
-    delete(vValue,1,s1Pos-1);
-    
-    SpacePos:=pos(' ',vValue);
-    if isGeb THEN SpacePos:=pos(#$D,vValue);//Geb200
-    if isJuniorII THEN SpacePos:=pos(#$D,vValue);//JuniorII
-    if isN600 THEN SpacePos:=pos(#$D,vValue);//长春迪瑞N-600
-    if isAve733 then SpacePos:=pos(#$D,vValue);//爱威AVE-733A
-    if isU500 then SpacePos:=pos('(',vValue);//艾康ACON-Mission U500
-
-    result:=copy(vValue,spBsLen+1,SpacePos-spBsLen-1);
-    
-    if ifAM4290 then
-    begin
-      ls:=TStringList.Create;
-      ExtractStrings([','],[],Pchar(Value),ls);
-      if ls.Count>=3 then result:=ls[2];
-      ls.Free;
-    end;
-    
-    result:=stringreplace(result,'-','',[rfReplaceAll,rfIgnoreCase]);//Geb200
-    result:='0000'+trim(result);//JuniorII需要trim
-    result:=rightstr(result,4);
-end;
-
-function TfrmMain.DIFF_decode(const Value:string):string;
-begin
-  result:=stringreplace(Value,'#',' ',[rfReplaceAll,rfIgnoreCase]);
-  result:=trim(result);
-end;
-
-function StrToList(const SourStr:string;const Separator:string):TStrings;
-//根据指定的分隔字符串(Separator)将字符串(SourStr)导入到字符串列表中
-var
-  vSourStr,s:string;
-  ll,lll:integer;
-begin
-  vSourStr:=SourStr;
-  Result := TStringList.Create;
-  lll:=length(Separator);
-
-  while pos(Separator,vSourStr)<>0 do
-  begin
-    ll:=pos(Separator,vSourStr);
-    Result.Add(copy(vSourStr,1,ll-1));
-    delete(vSourStr,1,ll+lll-1);
-  end;
-  Result.Add(vSourStr);
-  s:=vSourStr;
 end;
 
 function TListToVariant(AList:TList):OleVariant;
@@ -410,6 +325,7 @@ begin
       '默认样本状态'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '组合项目代码'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '开机自动运行'+#2+'CheckListBox'+#2+#2+'1'+#2+#2+#3+
+      '匹配样本号的正则'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '解析Mejer-700I条码'+#2+'CheckListBox'+#2+#2+'1'+#2+#2+#3+
       '设备唯一编号'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '高值质控联机号'+#2+'Edit'+#2+#2+'2'+#2+#2+#3+
@@ -470,18 +386,45 @@ VAR
   ReceiveItemInfo:OleVariant;
   isJuniorII,ifAM4290,isAve733:BOOLEAN;
   Barcode:String;
+  PerlRegEx:TPerlRegEx;
 begin
   if length(memo1.Lines.Text)>=60000 then memo1.Lines.Clear;//memo只能接受64K个字符
   memo1.Lines.Add(Str);
 
-  SpecNo:=GetSpecNo(Str);
+  //获得样本号 begin
+  PerlRegEx:=TPerlRegEx.Create;
+  PerlRegEx.RegEx:=RegExSpecNo;
+  PerlRegEx.Options:=PerlRegEx.Options+[preUnGreedy];//非贪婪模式,只匹配到第1次#$B开头及第1次$1C#$0D结尾的内容.否则,匹配到第1次#$B开头及最后1次$1C#$0D结尾的内容
+  PerlRegEx.Subject:=Str;
+  if PerlRegEx.Match then
+  begin
+    SpecNo:=PerlRegEx.MatchedText;
+    SpecNo:=StringReplace(SpecNo,'ID:','',[rfReplaceAll,rfIgnoreCase]);
+    SpecNo:=StringReplace(SpecNo,'(','',[rfReplaceAll,rfIgnoreCase]);
+    SpecNo:=StringReplace(SpecNo,'Seq.no.','',[rfReplaceAll,rfIgnoreCase]);
+    SpecNo:=StringReplace(SpecNo,'No.','',[rfReplaceAll,rfIgnoreCase]);
+    SpecNo:=StringReplace(SpecNo,'NO','',[rfReplaceAll,rfIgnoreCase]);
+    SpecNo:=StringReplace(SpecNo,'#','',[rfReplaceAll,rfIgnoreCase]);
+    SpecNo:=StringReplace(SpecNo,',N','',[rfReplaceAll,rfIgnoreCase]);
+    SpecNo:=StringReplace(SpecNo,',','',[rfReplaceAll,rfIgnoreCase]);
+    SpecNo:=stringreplace(SpecNo,'-','',[rfReplaceAll,rfIgnoreCase]);//Geb200
+    SpecNo:='0000'+trim(SpecNo);
+  end;
+  FreeAndNil(PerlRegEx);
+  //获得样本号 end
 
   isJuniorII:=pos('SEQ.NO.',uppercase(Str))>0;
   ifAM4290:=ManyStr(',',Pchar(Str))>20;//实际上AM4290的逗号不止这个数
   isAve733:=pos('MachineSN',Str)>0;//爱威AVE-733A
 
   ls:=TStringList.Create;
-  ExtractStrings([#$D,#$A],[],Pchar(Str),ls);//将每行导入到字符串列表中
+  ls.Text:=Str;//使用#$D、#$A分割成多行导入到字符串列表
+  //#$D#$A作为一个整体进行切割
+  //单个#$D能起到切割作用
+  //单个#$A能起到切割作用
+  //#$A#$D会被切割成一个空行
+  //#$A#$A会被切割成一个空行
+  //#$D#$D会被切割成一个空行
 
   ReceiveItemInfo:=VarArrayCreate([0,ls.Count-1],varVariant);
 

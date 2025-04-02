@@ -1,0 +1,17 @@
+
+#0012     2006-04-05
+            11:13:17
+*WBC  +-  15Cells/uL
+ NIT  -             
+ URO      Normal    
+ PRO  -   0      g/L
+ pH       5.0       
+*BLD  1+  25Cells/uL
+ SG      >1.030     
+ BIL  -   0   umol/L
+ Vc   -   0   mmol/L
+ KET  -   0   mmol/L
+ GLU  -   0   mmol/L
+                    
+                    
+

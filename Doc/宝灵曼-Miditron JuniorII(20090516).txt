@@ -1,0 +1,14 @@
+
+              Seq.no.  2
+09.05.16           14:27
+  SG :       1.000      
+  PH :           7      
+  LEU:         neg      
+  NIT:         neg      
+  PRO:         neg      
+  GLU:        norm      
+  KET:         neg      
+  UBG:        norm      
+  BIL:         neg      
+  ERY:         neg      
+
