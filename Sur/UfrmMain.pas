@@ -83,6 +83,8 @@ var
   EquipUnid:integer;//设备唯一编号
   AnalyBarcode:boolean;
   RegExSpecNo:String;//匹配样本号的正则
+  RegExDlttype:String;//匹配联机标识的正则
+  RegExValue:String;//匹配检验结果的正则
 
 //  RFM:STRING;       //返回数据
   hnd:integer;
@@ -197,6 +199,10 @@ begin
   AnalyBarcode:=ini.readBool(IniSection,'解析Mejer-700I条码',false);
   RegExSpecNo:=ini.ReadString(IniSection,'匹配样本号的正则','');
   if RegExSpecNo='' then RegExSpecNo:='NO.[\s\S]*\x20';//如正则为空,执行Match方法报错.故提供默认值
+  RegExDlttype:=ini.ReadString(IniSection,'匹配联机标识的正则','');
+  if RegExDlttype='' then RegExDlttype:='^.{4}';
+  RegExValue:=ini.ReadString(IniSection,'匹配检验结果的正则','');
+  if RegExValue='' then RegExValue:='.{4}(.*)';
 
   GroupName:=trim(ini.ReadString(IniSection,'工作组',''));
   EquipChar:=trim(uppercase(ini.ReadString(IniSection,'仪器字母','')));//读出来是大写就万无一失了
@@ -326,6 +332,8 @@ begin
       '组合项目代码'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '开机自动运行'+#2+'CheckListBox'+#2+#2+'1'+#2+#2+#3+
       '匹配样本号的正则'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
+      '匹配联机标识的正则'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
+      '匹配检验结果的正则'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '解析Mejer-700I条码'+#2+'CheckListBox'+#2+#2+'1'+#2+#2+#3+
       '设备唯一编号'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '高值质控联机号'+#2+'Edit'+#2+#2+'2'+#2+#2+#3+
@@ -384,7 +392,7 @@ VAR
   //FInts:IData2Lis;
   FInts:OleVariant;
   ReceiveItemInfo:OleVariant;
-  isJuniorII,ifAM4290,isAve733:BOOLEAN;
+  ifAM4290,isAve733:BOOLEAN;
   Barcode:String;
   PerlRegEx:TPerlRegEx;
 begin
@@ -413,7 +421,6 @@ begin
   FreeAndNil(PerlRegEx);
   //获得样本号 end
 
-  isJuniorII:=pos('SEQ.NO.',uppercase(Str))>0;
   ifAM4290:=ManyStr(',',Pchar(Str))>20;//实际上AM4290的逗号不止这个数
   isAve733:=pos('MachineSN',Str)>0;//爱威AVE-733A
 
@@ -440,35 +447,49 @@ begin
         ls5.Free;
       end;
     end;
-    
-    dlttype:=trim(copy(ls[i],1,4));
-    IF isJuniorII THEN dlttype:=trim(copy(ls[i],3,3));
-    if ifAM4290 then dlttype:=trim(copy(ls[i],1,pos(',',ls[i])-1));
-    if isAve733 then dlttype:=trim(copy(ls[i],1,3));
-    dlttype:=stringreplace(dlttype,'*','',[]);//CliniTek
-    sValue:=trim(copy(ls[i],5,MaxInt));
-    IF isJuniorII THEN sValue:=trim(copy(ls[i],7,MaxInt));
-    if ifAM4290 then
+
+    dlttype:='';
+
+    //获得联机标识 begin
+    PerlRegEx:=TPerlRegEx.Create;
+    PerlRegEx.RegEx:=RegExDlttype;
+    PerlRegEx.Options:=PerlRegEx.Options+[preUnGreedy];//非贪婪模式,只匹配到第1次#$B开头及第1次$1C#$0D结尾的内容.否则,匹配到第1次#$B开头及最后1次$1C#$0D结尾的内容
+    PerlRegEx.Subject:=ls[i];
+    if PerlRegEx.Match then
     begin
-      sValue:=copy(ls[i],pos(',',ls[i])+1,PosExt(',',Pchar(ls[i]),3)-pos(',',ls[i])-1);
-      sValue:=StringReplace(sValue,',','',[rfReplaceAll,rfIgnoreCase]);
+      dlttype:=PerlRegEx.MatchedText;
+      dlttype:=stringreplace(dlttype,'*','',[]);//CliniTek
     end;
-    if isAve733 then sValue:=trim(copy(ls[i],4,MaxInt));
-    if isAve733 and not SameText(dlttype,'PH') and not SameText(dlttype,'SG') and (sValue='1') then sValue:='±';
-    sValue:=StringReplace(sValue,'mmol/L','',[rfReplaceAll,rfIgnoreCase]);
-    sValue:=StringReplace(sValue,'Leu/uL','',[rfReplaceAll,rfIgnoreCase]);//HT-150
-    sValue:=StringReplace(sValue,'Cells/uL','',[rfReplaceAll,rfIgnoreCase]);//Geb200
-    sValue:=StringReplace(sValue,'Cell/uL','',[rfReplaceAll,rfIgnoreCase]);
-    sValue:=StringReplace(sValue,'mg/L','',[rfReplaceAll,rfIgnoreCase]);//HT-150
-    sValue:=StringReplace(sValue,'g/L','',[rfReplaceAll,rfIgnoreCase]);
-    sValue:=StringReplace(sValue,'umol/L','',[rfReplaceAll,rfIgnoreCase]);
-    sValue:=StringReplace(sValue,'mg/dl','',[rfReplaceAll,rfIgnoreCase]);//JuniorII
-    sValue:=StringReplace(sValue,'ery/uL','',[rfReplaceAll,rfIgnoreCase]);//GEB-600
-    sValue:=StringReplace(sValue,'EU/dL','',[rfReplaceAll,rfIgnoreCase]);//CliniTek100
-    sValue:=StringReplace(sValue,'/ul','',[rfReplaceAll,rfIgnoreCase]);//JuniorII
-    //sValue:=StringReplace(sValue,'neg','阴性(-)',[rfReplaceAll,rfIgnoreCase]);//JuniorII
-    //sValue:=StringReplace(sValue,'norm','正常',[rfReplaceAll,rfIgnoreCase]);//JuniorII
-    sValue:=trim(sValue);
+    FreeAndNil(PerlRegEx);
+    //获得联机标识 end
+
+    sValue:='';
+    
+    //获得检验结果 begin
+    PerlRegEx:=TPerlRegEx.Create;
+    PerlRegEx.RegEx:=RegExValue;
+    //PerlRegEx.Options:=PerlRegEx.Options+[preUnGreedy];//正则表达式中控制贪婪模式.因为获取检验结果有时需要贪婪模式
+    PerlRegEx.Subject:=ls[i];
+    if PerlRegEx.Match then
+    begin
+      sValue:=PerlRegEx.MatchedText;
+      if ifAM4290 then sValue:=StringReplace(sValue,',','',[rfReplaceAll,rfIgnoreCase]); 
+      if isAve733 and not SameText(dlttype,'PH') and not SameText(dlttype,'SG') and (sValue='1') then sValue:='±';
+      sValue:=StringReplace(sValue,'mmol/L','',[rfReplaceAll,rfIgnoreCase]);
+      sValue:=StringReplace(sValue,'Leu/uL','',[rfReplaceAll,rfIgnoreCase]);//HT-150
+      sValue:=StringReplace(sValue,'Cells/uL','',[rfReplaceAll,rfIgnoreCase]);//Geb200
+      sValue:=StringReplace(sValue,'Cell/uL','',[rfReplaceAll,rfIgnoreCase]);
+      sValue:=StringReplace(sValue,'mg/L','',[rfReplaceAll,rfIgnoreCase]);//HT-150
+      sValue:=StringReplace(sValue,'g/L','',[rfReplaceAll,rfIgnoreCase]);
+      sValue:=StringReplace(sValue,'umol/L','',[rfReplaceAll,rfIgnoreCase]);
+      sValue:=StringReplace(sValue,'mg/dl','',[rfReplaceAll,rfIgnoreCase]);//JuniorII
+      sValue:=StringReplace(sValue,'ery/uL','',[rfReplaceAll,rfIgnoreCase]);//GEB-600
+      sValue:=StringReplace(sValue,'EU/dL','',[rfReplaceAll,rfIgnoreCase]);//CliniTek100
+      sValue:=StringReplace(sValue,'/ul','',[rfReplaceAll,rfIgnoreCase]);//JuniorII
+      sValue:=trim(sValue);
+    end;
+    FreeAndNil(PerlRegEx);
+    //获得检验结果 end
 
     ReceiveItemInfo[i]:=VarArrayof([dlttype,sValue,'','']);
   end;

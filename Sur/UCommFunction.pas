@@ -9,9 +9,7 @@ function ShowOptionForm(const pCaption,pTabSheetCaption,pItemInfo,pInifile:Pchar
 function DeCryptStr(aStr: Pchar; aKey: Pchar): Pchar;stdcall;external 'LYFunction.dll';//Ω‚√‹
 function EnCryptStr(aStr: Pchar; aKey: Pchar): Pchar;stdcall;external 'LYFunction.dll';//º”√‹
 function GetHDSn(const RootPath:Pchar):Pchar;stdcall;external 'LYFunction.dll';
-function TryStrToFloatExt(const pSourStr:Pchar; var Value: Single): Boolean;stdcall;external 'LYFunction.dll';
 function ManyStr(const pSS, pSourStr: Pchar): integer;stdcall;external 'LYFunction.dll';
-function PosExt(const psubStr,pAllstr:Pchar;const Times:Byte):integer;stdcall;external 'LYFunction.dll';
 
 implementation
 
