@@ -438,6 +438,7 @@ begin
     SpecNo:=StringReplace(SpecNo,',','',[rfReplaceAll,rfIgnoreCase]);
     SpecNo:=stringreplace(SpecNo,'-','',[rfReplaceAll,rfIgnoreCase]);//Geb200
     SpecNo:=stringreplace(SpecNo,'流水号：','',[rfReplaceAll,rfIgnoreCase]);//宝太-BIOT-YG-II（保卫者II）
+    SpecNo:=stringreplace(SpecNo,':','',[rfReplaceAll,rfIgnoreCase]);//康立-AFT-500
     SpecNo:='0000'+trim(SpecNo);
   end;
   FreeAndNil(PerlRegEx);
@@ -508,6 +509,7 @@ begin
       sValue:=StringReplace(sValue,'ery/uL','',[rfReplaceAll,rfIgnoreCase]);//GEB-600
       sValue:=StringReplace(sValue,'EU/dL','',[rfReplaceAll,rfIgnoreCase]);//CliniTek100
       sValue:=StringReplace(sValue,'/ul','',[rfReplaceAll,rfIgnoreCase]);//JuniorII
+      sValue:=StringReplace(sValue,'=','',[rfReplaceAll,rfIgnoreCase]);//康立-AFT-500
       sValue:=trim(sValue);
     end;
     FreeAndNil(PerlRegEx);
