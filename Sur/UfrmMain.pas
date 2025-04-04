@@ -160,7 +160,15 @@ begin
 
   //笨方法替换.todo:通用替换方法
   StartString:=StringReplace(StartString, '$02', #$02, [rfReplaceAll]);
+  StartString:=StringReplace(StartString, '$7F', #$7F, [rfReplaceAll]);//HT-150、HT-MA4280KB
+  StartString:=StringReplace(StartString, '$1B', #$1B, [rfReplaceAll]);//宝太-BIOT-YG-II（保卫者II）
+  StartString:=StringReplace(StartString, '$01', #$01, [rfReplaceAll]);//宝太-BIOT-YG-II（保卫者II）
+  StartString:=StringReplace(StartString, '$1C', #$1C, [rfReplaceAll]);//宝太-BIOT-YG-II（保卫者II）
   StopString:=StringReplace(StopString, '$03', #$03, [rfReplaceAll]);
+  StopString:=StringReplace(StopString, '$7F', #$7F, [rfReplaceAll]);//HT-150、HT-MA4280KB
+  StopString:=StringReplace(StopString, '$0D', #$0D, [rfReplaceAll]);//宝太-BIOT-YG-II（保卫者II）
+  StopString:=StringReplace(StopString, '$0A', #$0A, [rfReplaceAll]);//宝太-BIOT-YG-II（保卫者II）
+  StopString:=StringReplace(StopString, '$1B', #$1B, [rfReplaceAll]);//宝太-BIOT-YG-II（保卫者II）
   
   ComDataPacket1.StartString:=StartString;//变量StartString在UpdateConfig中赋值,故该代码在UpdateConfig之后
   ComDataPacket1.StopString:=StopString;//变量StopString在UpdateConfig中赋值,故该代码在UpdateConfig之后
@@ -429,6 +437,7 @@ begin
     SpecNo:=StringReplace(SpecNo,',N','',[rfReplaceAll,rfIgnoreCase]);
     SpecNo:=StringReplace(SpecNo,',','',[rfReplaceAll,rfIgnoreCase]);
     SpecNo:=stringreplace(SpecNo,'-','',[rfReplaceAll,rfIgnoreCase]);//Geb200
+    SpecNo:=stringreplace(SpecNo,'流水号：','',[rfReplaceAll,rfIgnoreCase]);//宝太-BIOT-YG-II（保卫者II）
     SpecNo:='0000'+trim(SpecNo);
   end;
   FreeAndNil(PerlRegEx);
