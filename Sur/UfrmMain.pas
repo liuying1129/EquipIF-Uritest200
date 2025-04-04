@@ -85,6 +85,8 @@ var
   RegExSpecNo:String;//匹配联机号的正则
   RegExDlttype:String;//匹配联机标识的正则
   RegExValue:String;//匹配检验结果的正则
+  StartString:String;
+  StopString:String;
 
 //  RFM:STRING;       //返回数据
   hnd:integer;
@@ -153,11 +155,16 @@ end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
-  ComDataPacket1.StartString:=STX;
-  ComDataPacket1.StopString:=ETX;
-
   ConnectString:=GetConnectString;
   UpdateConfig;
+
+  //笨方法替换.todo:通用替换方法
+  StartString:=StringReplace(StartString, '$02', #$02, [rfReplaceAll]);
+  StopString:=StringReplace(StopString, '$03', #$03, [rfReplaceAll]);
+  
+  ComDataPacket1.StartString:=StartString;//变量StartString在UpdateConfig中赋值,故该代码在UpdateConfig之后
+  ComDataPacket1.StopString:=StopString;//变量StopString在UpdateConfig中赋值,故该代码在UpdateConfig之后
+  
   if ifRegister then bRegister:=true else bRegister:=false;  
 
   Caption:='数据接收服务'+ExtractFileName(Application.ExeName);
@@ -198,11 +205,15 @@ begin
   autorun:=ini.readBool(IniSection,'开机自动运行',false);
   AnalyBarcode:=ini.readBool(IniSection,'解析Mejer-700I条码',false);
   RegExSpecNo:=ini.ReadString(IniSection,'匹配联机号的正则','');
-  if RegExSpecNo='' then RegExSpecNo:='NO.[\s\S]*\x20';//如正则为空,执行Match方法报错.故提供默认值
+  if RegExSpecNo='' then RegExSpecNo:='NO\..*?\x20';//如正则为空,执行Match方法报错.故提供默认值
   RegExDlttype:=ini.ReadString(IniSection,'匹配联机标识的正则','');
   if RegExDlttype='' then RegExDlttype:='^.{4}';
   RegExValue:=ini.ReadString(IniSection,'匹配检验结果的正则','');
   if RegExValue='' then RegExValue:='.{4}(.*)';
+  StartString:=ini.ReadString(IniSection,'StartString','');
+  if StartString='' then StartString:='$02';
+  StopString:=ini.ReadString(IniSection,'StopString','');
+  if StopString='' then StopString:='$03';
 
   GroupName:=trim(ini.ReadString(IniSection,'工作组',''));
   EquipChar:=trim(uppercase(ini.ReadString(IniSection,'仪器字母','')));//读出来是大写就万无一失了
@@ -331,6 +342,8 @@ begin
       '默认样本状态'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '组合项目代码'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '开机自动运行'+#2+'CheckListBox'+#2+#2+'1'+#2+#2+#3+
+      'StartString'+#2+'Edit'+#2+#2+'1'+#2+'16进制必须2位.如Begin $02'+#2+#3+
+      'StopString'+#2+'Edit'+#2+#2+'1'+#2+'16进制必须2位.如End $03'+#2+#3+
       '匹配联机号的正则'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '匹配联机标识的正则'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '匹配检验结果的正则'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
