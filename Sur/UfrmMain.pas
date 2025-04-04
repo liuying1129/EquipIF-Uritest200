@@ -82,7 +82,7 @@ var
   H_DTR_RTS:boolean;//DTR/RTS高电位
   EquipUnid:integer;//设备唯一编号
   AnalyBarcode:boolean;
-  RegExSpecNo:String;//匹配样本号的正则
+  RegExSpecNo:String;//匹配联机号的正则
   RegExDlttype:String;//匹配联机标识的正则
   RegExValue:String;//匹配检验结果的正则
 
@@ -197,7 +197,7 @@ begin
   H_DTR_RTS:=ini.readBool(IniSection,'DTR/RTS高电位',false);
   autorun:=ini.readBool(IniSection,'开机自动运行',false);
   AnalyBarcode:=ini.readBool(IniSection,'解析Mejer-700I条码',false);
-  RegExSpecNo:=ini.ReadString(IniSection,'匹配样本号的正则','');
+  RegExSpecNo:=ini.ReadString(IniSection,'匹配联机号的正则','');
   if RegExSpecNo='' then RegExSpecNo:='NO.[\s\S]*\x20';//如正则为空,执行Match方法报错.故提供默认值
   RegExDlttype:=ini.ReadString(IniSection,'匹配联机标识的正则','');
   if RegExDlttype='' then RegExDlttype:='^.{4}';
@@ -331,7 +331,7 @@ begin
       '默认样本状态'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '组合项目代码'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '开机自动运行'+#2+'CheckListBox'+#2+#2+'1'+#2+#2+#3+
-      '匹配样本号的正则'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
+      '匹配联机号的正则'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '匹配联机标识的正则'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '匹配检验结果的正则'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '解析Mejer-700I条码'+#2+'CheckListBox'+#2+#2+'1'+#2+#2+#3+
@@ -399,10 +399,10 @@ begin
   if length(memo1.Lines.Text)>=60000 then memo1.Lines.Clear;//memo只能接受64K个字符
   memo1.Lines.Add(Str);
 
-  //获得样本号 begin
+  //获得联机号 begin
   PerlRegEx:=TPerlRegEx.Create;
   PerlRegEx.RegEx:=RegExSpecNo;
-  PerlRegEx.Options:=PerlRegEx.Options+[preUnGreedy];//非贪婪模式,只匹配到第1次#$B开头及第1次$1C#$0D结尾的内容.否则,匹配到第1次#$B开头及最后1次$1C#$0D结尾的内容
+  //PerlRegEx.Options:=PerlRegEx.Options+[preUnGreedy];//正则表达式中控制贪婪模式,以便更好的灵活性
   PerlRegEx.Subject:=Str;
   if PerlRegEx.Match then
   begin
@@ -419,7 +419,7 @@ begin
     SpecNo:='0000'+trim(SpecNo);
   end;
   FreeAndNil(PerlRegEx);
-  //获得样本号 end
+  //获得联机号 end
 
   ifAM4290:=ManyStr(',',Pchar(Str))>20;//实际上AM4290的逗号不止这个数
   isAve733:=pos('MachineSN',Str)>0;//爱威AVE-733A
@@ -453,7 +453,7 @@ begin
     //获得联机标识 begin
     PerlRegEx:=TPerlRegEx.Create;
     PerlRegEx.RegEx:=RegExDlttype;
-    PerlRegEx.Options:=PerlRegEx.Options+[preUnGreedy];//非贪婪模式,只匹配到第1次#$B开头及第1次$1C#$0D结尾的内容.否则,匹配到第1次#$B开头及最后1次$1C#$0D结尾的内容
+    //PerlRegEx.Options:=PerlRegEx.Options+[preUnGreedy];//正则表达式中控制贪婪模式,以便更好的灵活性
     PerlRegEx.Subject:=ls[i];
     if PerlRegEx.Match then
     begin
