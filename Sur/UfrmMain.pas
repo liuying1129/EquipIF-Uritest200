@@ -213,11 +213,8 @@ begin
   autorun:=ini.readBool(IniSection,'开机自动运行',false);
   AnalyBarcode:=ini.readBool(IniSection,'解析Mejer-700I条码',false);
   RegExSpecNo:=ini.ReadString(IniSection,'匹配联机号的正则','');
-  if RegExSpecNo='' then RegExSpecNo:='NO\..*?\x20';//如正则为空,执行Match方法报错.故提供默认值
   RegExDlttype:=ini.ReadString(IniSection,'匹配联机标识的正则','');
-  if RegExDlttype='' then RegExDlttype:='^.{4}';
   RegExValue:=ini.ReadString(IniSection,'匹配检验结果的正则','');
-  if RegExValue='' then RegExValue:='.{4}(.*)';
   StartString:=ini.ReadString(IniSection,'StartString','');
   if StartString='' then StartString:='$02';
   StopString:=ini.ReadString(IniSection,'StopString','');
@@ -416,16 +413,27 @@ VAR
   ifAM4290,isAve733:BOOLEAN;
   Barcode:String;
   PerlRegEx:TPerlRegEx;
+  ifMatch:Boolean;
 begin
   if length(memo1.Lines.Text)>=60000 then memo1.Lines.Clear;//memo只能接受64K个字符
   memo1.Lines.Add(Str);
+
+  ifMatch:=False;//初始化
 
   //获得联机号 begin
   PerlRegEx:=TPerlRegEx.Create;
   PerlRegEx.RegEx:=RegExSpecNo;
   //PerlRegEx.Options:=PerlRegEx.Options+[preUnGreedy];//正则表达式中控制贪婪模式,以便更好的灵活性
   PerlRegEx.Subject:=Str;
-  if PerlRegEx.Match then
+  Try
+    ifMatch:=PerlRegEx.Match;//正则表达式为空、语法不正确，Match方法会抛出异常
+  except
+    on E:Exception do
+    begin
+      memo1.Lines.Add('匹配联机号报错:'+E.Message);
+    end;
+  end;  
+  if ifMatch then
   begin
     SpecNo:=PerlRegEx.MatchedText;
     SpecNo:=StringReplace(SpecNo,'ID:','',[rfReplaceAll,rfIgnoreCase]);
@@ -478,7 +486,15 @@ begin
     PerlRegEx.RegEx:=RegExDlttype;
     //PerlRegEx.Options:=PerlRegEx.Options+[preUnGreedy];//正则表达式中控制贪婪模式,以便更好的灵活性
     PerlRegEx.Subject:=ls[i];
-    if PerlRegEx.Match then
+    Try
+      ifMatch:=PerlRegEx.Match;//正则表达式为空、语法不正确，Match方法会抛出异常
+    except
+      on E:Exception do
+      begin
+        memo1.Lines.Add('匹配联机标识报错:'+E.Message);
+      end;
+    end;
+    if ifMatch then
     begin
       dlttype:=PerlRegEx.MatchedText;
       dlttype:=stringreplace(dlttype,'*','',[]);//CliniTek
@@ -493,7 +509,15 @@ begin
     PerlRegEx.RegEx:=RegExValue;
     //PerlRegEx.Options:=PerlRegEx.Options+[preUnGreedy];//正则表达式中控制贪婪模式.因为获取检验结果有时需要贪婪模式
     PerlRegEx.Subject:=ls[i];
-    if PerlRegEx.Match then
+    Try
+      ifMatch:=PerlRegEx.Match;//正则表达式为空、语法不正确，Match方法会抛出异常
+    except
+      on E:Exception do
+      begin
+        memo1.Lines.Add('匹配检验结果报错:'+E.Message);
+      end;
+    end;
+    if ifMatch then
     begin
       sValue:=PerlRegEx.MatchedText;
       if ifAM4290 then sValue:=StringReplace(sValue,',','',[rfReplaceAll,rfIgnoreCase]); 
