@@ -418,13 +418,12 @@ begin
   if length(memo1.Lines.Text)>=60000 then memo1.Lines.Clear;//memo只能接受64K个字符
   memo1.Lines.Add(Str);
 
-  ifMatch:=False;//初始化
-
   //获得联机号 begin
   PerlRegEx:=TPerlRegEx.Create;
   PerlRegEx.RegEx:=RegExSpecNo;
   //PerlRegEx.Options:=PerlRegEx.Options+[preUnGreedy];//正则表达式中控制贪婪模式,以便更好的灵活性
   PerlRegEx.Subject:=Str;
+  ifMatch:=False;//初始化
   Try
     ifMatch:=PerlRegEx.Match;//正则表达式为空、语法不正确，Match方法会抛出异常
   except
@@ -486,6 +485,7 @@ begin
     PerlRegEx.RegEx:=RegExDlttype;
     //PerlRegEx.Options:=PerlRegEx.Options+[preUnGreedy];//正则表达式中控制贪婪模式,以便更好的灵活性
     PerlRegEx.Subject:=ls[i];
+    ifMatch:=False;//初始化
     Try
       ifMatch:=PerlRegEx.Match;//正则表达式为空、语法不正确，Match方法会抛出异常
     except
@@ -509,6 +509,7 @@ begin
     PerlRegEx.RegEx:=RegExValue;
     //PerlRegEx.Options:=PerlRegEx.Options+[preUnGreedy];//正则表达式中控制贪婪模式.因为获取检验结果有时需要贪婪模式
     PerlRegEx.Subject:=ls[i];
+    ifMatch:=False;//初始化
     Try
       ifMatch:=PerlRegEx.Match;//正则表达式为空、语法不正确，Match方法会抛出异常
     except
