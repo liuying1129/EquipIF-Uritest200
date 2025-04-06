@@ -494,11 +494,7 @@ begin
         memo1.Lines.Add('匹配联机标识报错:'+E.Message);
       end;
     end;
-    if ifMatch then
-    begin
-      dlttype:=PerlRegEx.MatchedText;
-      dlttype:=stringreplace(dlttype,'*','',[]);//CliniTek
-    end;
+    if ifMatch then dlttype:=PerlRegEx.MatchedText;
     FreeAndNil(PerlRegEx);
     //获得联机标识 end
 
