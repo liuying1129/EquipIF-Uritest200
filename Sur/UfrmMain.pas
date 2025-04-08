@@ -434,7 +434,11 @@ begin
   end;  
   if ifMatch then
   begin
-    SpecNo:=PerlRegEx.MatchedText;
+    SpecNo:=PerlRegEx.MatchedText;//Groups[0]与MatchedText功能一样
+    //GroupCount为捕获组数量
+    //Groups[1] 第一个捕获组匹配的文本
+    //Groups[2] 第二个捕获组匹配的文本，以此类推
+    if PerlRegEx.GroupCount>0 then SpecNo:=PerlRegEx.Groups[1];//支持捕获组匹配.如使用捕获组,获取结果一定是Groups[1]    
     SpecNo:=StringReplace(SpecNo,'ID:','',[rfReplaceAll,rfIgnoreCase]);
     SpecNo:=StringReplace(SpecNo,'(','',[rfReplaceAll,rfIgnoreCase]);
     SpecNo:=StringReplace(SpecNo,'Seq.no.','',[rfReplaceAll,rfIgnoreCase]);
@@ -494,7 +498,14 @@ begin
         memo1.Lines.Add('匹配联机标识报错:'+E.Message);
       end;
     end;
-    if ifMatch then dlttype:=PerlRegEx.MatchedText;
+    if ifMatch then
+    begin
+      dlttype:=PerlRegEx.MatchedText;//Groups[0]与MatchedText功能一样
+      //GroupCount为捕获组数量
+      //Groups[1] 第一个捕获组匹配的文本
+      //Groups[2] 第二个捕获组匹配的文本，以此类推
+      if PerlRegEx.GroupCount>0 then dlttype:=PerlRegEx.Groups[1];//支持捕获组匹配.如使用捕获组,获取结果一定是Groups[1]
+    end;
     FreeAndNil(PerlRegEx);
     //获得联机标识 end
 
@@ -516,7 +527,11 @@ begin
     end;
     if ifMatch then
     begin
-      sValue:=PerlRegEx.MatchedText;
+      sValue:=PerlRegEx.MatchedText;//Groups[0]与MatchedText功能一样
+      //GroupCount为捕获组数量
+      //Groups[1] 第一个捕获组匹配的文本
+      //Groups[2] 第二个捕获组匹配的文本，以此类推
+      if PerlRegEx.GroupCount>0 then sValue:=PerlRegEx.Groups[1];//支持捕获组匹配.如使用捕获组,获取结果一定是Groups[1]
       if ifAM4290 then sValue:=StringReplace(sValue,',','',[rfReplaceAll,rfIgnoreCase]); 
       if isAve733 and not SameText(dlttype,'PH') and not SameText(dlttype,'SG') and (sValue='1') then sValue:='±';
       sValue:=StringReplace(sValue,'mmol/L','',[rfReplaceAll,rfIgnoreCase]);
