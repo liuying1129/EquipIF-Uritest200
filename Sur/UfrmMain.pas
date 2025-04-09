@@ -439,16 +439,9 @@ begin
     //Groups[1] 第一个捕获组匹配的文本
     //Groups[2] 第二个捕获组匹配的文本，以此类推
     if PerlRegEx.GroupCount>0 then SpecNo:=PerlRegEx.Groups[1];//支持捕获组匹配.如使用捕获组,获取结果一定是Groups[1]    
-    SpecNo:=StringReplace(SpecNo,'ID:','',[rfReplaceAll,rfIgnoreCase]);
-    SpecNo:=StringReplace(SpecNo,'(','',[rfReplaceAll,rfIgnoreCase]);
-    SpecNo:=StringReplace(SpecNo,'Seq.no.','',[rfReplaceAll,rfIgnoreCase]);
-    SpecNo:=StringReplace(SpecNo,'No.','',[rfReplaceAll,rfIgnoreCase]);
-    SpecNo:=StringReplace(SpecNo,'NO','',[rfReplaceAll,rfIgnoreCase]);
-    SpecNo:=StringReplace(SpecNo,'#','',[rfReplaceAll,rfIgnoreCase]);
     SpecNo:=StringReplace(SpecNo,',N','',[rfReplaceAll,rfIgnoreCase]);
     SpecNo:=StringReplace(SpecNo,',','',[rfReplaceAll,rfIgnoreCase]);
     SpecNo:=stringreplace(SpecNo,'-','',[rfReplaceAll,rfIgnoreCase]);//Geb200
-    SpecNo:=stringreplace(SpecNo,'流水号：','',[rfReplaceAll,rfIgnoreCase]);//宝太-BIOT-YG-II（保卫者II）
     SpecNo:=stringreplace(SpecNo,':','',[rfReplaceAll,rfIgnoreCase]);//康立-AFT-500
     SpecNo:=RightStr('0000'+trim(SpecNo),4);
   end;
@@ -545,7 +538,6 @@ begin
       sValue:=StringReplace(sValue,'ery/uL','',[rfReplaceAll,rfIgnoreCase]);//GEB-600
       sValue:=StringReplace(sValue,'EU/dL','',[rfReplaceAll,rfIgnoreCase]);//CliniTek100
       sValue:=StringReplace(sValue,'/ul','',[rfReplaceAll,rfIgnoreCase]);//JuniorII
-      //sValue:=StringReplace(sValue,'=','',[rfReplaceAll,rfIgnoreCase]);//康立-AFT-500.因为结果可能存在等号(如<=0.2),故不能替换等号
       sValue:=trim(sValue);
     end;
     FreeAndNil(PerlRegEx);
