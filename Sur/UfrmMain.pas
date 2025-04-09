@@ -439,10 +439,7 @@ begin
     //Groups[1] 第一个捕获组匹配的文本
     //Groups[2] 第二个捕获组匹配的文本，以此类推
     if PerlRegEx.GroupCount>0 then SpecNo:=PerlRegEx.Groups[1];//支持捕获组匹配.如使用捕获组,获取结果一定是Groups[1]    
-    SpecNo:=StringReplace(SpecNo,',N','',[rfReplaceAll,rfIgnoreCase]);
-    SpecNo:=StringReplace(SpecNo,',','',[rfReplaceAll,rfIgnoreCase]);
     SpecNo:=stringreplace(SpecNo,'-','',[rfReplaceAll,rfIgnoreCase]);//Geb200
-    SpecNo:=stringreplace(SpecNo,':','',[rfReplaceAll,rfIgnoreCase]);//康立-AFT-500
     SpecNo:=RightStr('0000'+trim(SpecNo),4);
   end;
   FreeAndNil(PerlRegEx);
