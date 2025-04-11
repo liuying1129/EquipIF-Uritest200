@@ -87,6 +87,7 @@ var
   RegExValue:String;//匹配检验结果的正则
   StartString:String;
   StopString:String;
+  ifRecLog:boolean;//是否记录调试日志
 
 //  RFM:STRING;       //返回数据
   hnd:integer;
@@ -211,6 +212,7 @@ begin
   ParityBit:=ini.ReadString(IniSection,'校验位','None');
   H_DTR_RTS:=ini.readBool(IniSection,'DTR/RTS高电位',false);
   autorun:=ini.readBool(IniSection,'开机自动运行',false);
+  ifRecLog:=ini.readBool(IniSection,'调试日志',false);
   AnalyBarcode:=ini.readBool(IniSection,'解析Mejer-700I条码',false);
   RegExSpecNo:=ini.ReadString(IniSection,'匹配联机号的正则','');
   RegExDlttype:=ini.ReadString(IniSection,'匹配联机标识的正则','');
@@ -353,6 +355,7 @@ begin
       '匹配联机标识的正则'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '匹配检验结果的正则'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '解析Mejer-700I条码'+#2+'CheckListBox'+#2+#2+'1'+#2+#2+#3+
+      '调试日志'+#2+'CheckListBox'+#2+#2+'0'+#2+'注:强烈建议在正常运行时关闭'+#2+#3+
       '设备唯一编号'+#2+'Edit'+#2+#2+'1'+#2+#2+#3+
       '高值质控联机号'+#2+'Edit'+#2+#2+'2'+#2+#2+#3+
       '常值质控联机号'+#2+'Edit'+#2+#2+'2'+#2+#2+#3+
@@ -552,7 +555,7 @@ begin
       (GroupName),(SpecType),(SpecStatus),(EquipChar),
       (CombinID),'{!@#}{!@#}{!@#}{!@#}'+Barcode,(LisFormCaption),(ConnectString),
       (QuaContSpecNoG),(QuaContSpecNo),(QuaContSpecNoD),'',
-      false,true,'常规',
+      ifRecLog,true,'常规',
       '',
       EquipUnid,
       '','','','',
