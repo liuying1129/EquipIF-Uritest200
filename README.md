@@ -20,7 +20,7 @@ LYTray的Icon属性，保存原icon文件（如tray.ico）
 
 设置LYTray1的popupmenu 
 
-设置PopupMenu1.N1（配置菜单）的default属性为true 
+设置PopupMenu1.N1（配置菜单）的default属性为true 【双击自带TrayIcon，不会自动执行default菜单项的事件。需在自带TrayIcon的双击事件中增加代码Show】
   
 删除action组件 
 
