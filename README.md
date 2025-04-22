@@ -16,7 +16,7 @@ LYTray的Icon属性，保存原icon文件（如tray.ico）
 
 设置LYTray1的icon属性为文件tray.ico 
 
-设置LYTray1的IconVisible属性为true 
+设置LYTray1的IconVisible属性为true 【自带TrayIcon的Visible属性】
 
 设置LYTray1的popupmenu 
 
@@ -38,7 +38,7 @@ FormClose事件代码改为：
 
   action:=caNone; 
   
-  LYTray1.HideMainForm;  
+  LYTray1.HideMainForm;  【自带TrayIcon：Hide】
   
 N3Click事件代码改为： 
 
@@ -54,6 +54,6 @@ N3Click事件代码改为：
 
 PopupMenu1.N1（配置菜单）菜单项单击事件代码改为： 
 
-  LYTray1.ShowMainForm;   
+  LYTray1.ShowMainForm;   【自带TrayIcon：Show】
   
 删除单元引用LYTray、ActnList、AppEvnts、registry
